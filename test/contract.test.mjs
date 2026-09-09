@@ -167,7 +167,7 @@ test("corrupt store: the garbage is quarantined byte-for-byte and nothing is ove
   assert.equal(readdirSync(dir).includes("data.json"), false, "an empty store must not be written over the corrupt one");
 });
 
-test.skip("cap: an export over the free 200-row cap writes no file at all", async (t) => {
+test("cap: an export over the free 200-row cap writes no file at all", async (t) => {
   const c = client();
   t.after(() => c.close());
   await c.init();

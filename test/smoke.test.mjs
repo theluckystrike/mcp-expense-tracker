@@ -216,7 +216,7 @@ test("stdio: initialize, tools/list, expenses, rules, summary, mileage, rebill",
   assert.equal(r.isError, true);
 });
 
-test.skip("free caps: 30-day window, 3 projects, 5 rules, 200-row csv export writes zero bytes", async (t) => {
+test("free caps: 30-day window, 3 projects, 5 rules, 200-row csv export writes zero bytes", async (t) => {
   const c = client();
   t.after(() => c.close());
   await init(c);
