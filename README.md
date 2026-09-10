@@ -2,7 +2,7 @@
 
 <!-- mirror-seo:start -->
 
-**MCP server for expense tracking, an expense tracker for receipts and mileage.** Receipts, mileage and expenses that turn into invoice lines.
+**MCP server for expense tracking: track business expenses, receipts and mileage with an expense tracker.** Receipts, mileage and expenses that turn into invoice lines.
 
 Works with Claude Desktop, Claude Code, Cursor and any Model Context Protocol client. Runs on your own machine, or hosted with no install.
 
