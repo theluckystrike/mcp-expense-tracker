@@ -1,14 +1,45 @@
 # mcp-expense-tracker
 
+<!-- mirror-seo:start -->
+
+**MCP server for expense tracking, an expense tracker for receipts and mileage.** Receipts, mileage and expenses that turn into invoice lines.
+
+Works with Claude Desktop, Claude Code, Cursor and any Model Context Protocol client. Runs on your own machine, or hosted with no install.
+
+## Install
+
+**Hosted, nothing to install.** Point an MCP client at `https://mcp.zovo.one/mcp/expense-tracker` over streamable-http and send `Authorization: Bearer <token>`, where the token is a Pro key or a free anonymous one from <https://mcp.zovo.one/mcp/token>.
+
+**Claude Desktop, one click.** Download `expense-tracker.mcpb` from the [latest release](https://github.com/theluckystrike/mcp-servers/releases/latest) and double-click it.
+
+**From source.** The mirror is self-contained: every `@theluckystrike/*` dependency is vendored, so a fresh clone builds with no extra setup.
+
+```sh
+git clone https://github.com/theluckystrike/mcp-expense-tracker.git
+cd mcp-expense-tracker
+npm install && npm run build
+```
+
+Then point your client at the built entry point:
+
+```json
+{
+  "mcpServers": {
+    "expense-tracker": {
+      "command": "node",
+      "args": ["/absolute/path/to/mcp-expense-tracker/dist/index.js"]
+    }
+  }
+}
+```
+
+> `@theluckystrike/mcp-expense-tracker` is **not published on npm yet**, so an `npx -y @theluckystrike/mcp-expense-tracker` command will fail. The three paths above are the working ones and each is exercised by CI.
+
 ![expense-tracker demo](https://raw.githubusercontent.com/theluckystrike/mcp-servers/main/assets/demo-expense-tracker.gif)
-
-**One-click install:** download `expense-tracker.mcpb` from the [latest release](https://github.com/theluckystrike/mcp-servers/releases/latest) and double-click it in Claude Desktop.
-
-**Hosted endpoint (no install):** `https://mcp.zovo.one/mcp/expense-tracker` (streamable-http; send `Authorization: Bearer <Pro key or anonymous token from https://mcp.zovo.one/mcp/token>`).
 
 Read-only mirror of [mcp-servers/servers/expense-tracker](https://github.com/theluckystrike/mcp-servers/tree/main/servers/expense-tracker). See [MIRROR.md](MIRROR.md).
 
-
+<!-- mirror-seo:end -->
 
 Say "12.30 euros at Adobe, software, billable to Acme" and it is logged, categorised, VAT-split and ready to rebill. This MCP server keeps a local ledger of your business expenses: every amount is held in integer minor units in its own currency, `vat_rate` splits the gross on the receipt into net and VAT (set it once with `expense_settings` and every later expense is split without repeating it), merchant rules categorise new expenses on their own, receipts are attached by path and sha256 so an audit can prove the file has not changed, and business trips are priced from a built-in mileage table. Summaries group by category, project, month or merchant, always per currency and never mixed. It exports to CSV, xlsx or JSON, and `expense_to_invoice` hands the billable expenses of a project to `mcp-invoice` in exactly the line-item shape `invoice_create` expects. Everything is stored in a plain JSON file on your own machine; nothing is uploaded anywhere.
 
