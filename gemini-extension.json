@@ -1,6 +1,6 @@
 {
   "name": "mcp-expense-tracker",
-  "version": "0.21.0",
+  "version": "0.22.0",
   "description": "MCP server for expense tracking: track business expenses, receipts and mileage with an expense tracker. Receipts, mileage and expenses that turn into invoice lines.",
   "settings": [
     {
