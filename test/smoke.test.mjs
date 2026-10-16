@@ -2,6 +2,7 @@
 // lives only in the monorepo (keys/license-private.pem); run them there.
 // Mirror note: tests that run a script from the monorepo's scripts/ directory are
 // skipped here. That directory is not part of a server folder; run them in the monorepo.
+import "./_tmp-scope.mjs"; // run-scoped TMPDIR, removed on exit
 import test from "node:test";
 import assert from "node:assert/strict";
 import { spawn, execFileSync } from "node:child_process";
@@ -199,7 +200,7 @@ test("stdio: initialize, tools/list, expenses, rules, summary, mileage, rebill",
   // free tier: xlsx refused, nothing written
   const xlsxPath = join(c.home, "out.xlsx");
   r = await c.call("expense_export", { from: daysAgo(10), to: today, format: "xlsx", path: xlsxPath });
-  assert.equal(r.isError, false, "a limit is not a transport error");
+  assert.equal(r.isError, true, "a refused export is an error result");
   assert.match(r.text, /Pro/);
   assert.equal(existsSync(xlsxPath), false, "no file may be written when the export is refused");
 
@@ -234,14 +235,14 @@ test("free caps: 30-day window, 3 projects, 5 rules, 200-row csv export writes z
     assert.equal(r.isError, false);
   }
   let r = await c.call("expense_add", { amount: 5, currency: "EUR", project: "P4", date: today });
-  assert.equal(r.isError, false);
+  assert.equal(r.isError, true);
   assert.match(r.text, /free tier tracks 3 projects/);
   const after = JSON.parse((await c.call("expense_list", { from: daysAgo(10), to: today, project: "P4" })).text);
   assert.equal(after.count, 0, "the refused expense must not be stored");
 
   // rules
   r = await c.call("category_rules", { rules: Array.from({ length: 6 }, (_, i) => ({ match: `m${i}`, category: "c" })) });
-  assert.equal(r.isError, false);
+  assert.equal(r.isError, true);
   assert.match(r.text, /free tier stores 5/);
   assert.equal(JSON.parse((await c.call("category_rules", {})).text).count, 0);
 
@@ -251,7 +252,7 @@ test("free caps: 30-day window, 3 projects, 5 rules, 200-row csv export writes z
   assert.equal(listedAll.count, 201);
   const out = join(c.home, "big.csv");
   r = await c.call("expense_export", { from: daysAgo(10), to: today, format: "csv", path: out });
-  assert.equal(r.isError, false);
+  assert.equal(r.isError, true);
   assert.match(r.text, /No file was written/);
   assert.equal(existsSync(out), false, "a refused export must write zero bytes");
 });

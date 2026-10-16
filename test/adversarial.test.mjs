@@ -1,4 +1,5 @@
 // Regressions for the hostile-input probes in docs/EXPENSE_AUDIT.md.
+import "./_tmp-scope.mjs"; // run-scoped TMPDIR, removed on exit
 import test from "node:test";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
@@ -154,7 +155,7 @@ test("free export cap writes no partial file", async (t) => {
   assert.ok(existsSync(out));
   const xlsx = join(home, "y.xlsx");
   const gatedR = await c.call("expense_export", { from: "2000-01-01", to: "2100-01-01", format: "xlsx", path: xlsx });
-  assert.ok(!gatedR.isError, "a limit is information, not a transport error");
+  assert.ok(gatedR.isError, "a refused export is an error result");
   assert.equal(existsSync(xlsx), false, "no partial file on a gated export");
 });
 

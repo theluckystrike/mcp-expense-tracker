@@ -8,6 +8,9 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { createLicenseGate, readSharedProfile, withFileLock } from "@theluckystrike/mcp-license";
 import { z } from "zod";
 import * as XLSX from "xlsx";
+
+// SheetJS ESM requires filesystem injection for writeFile.
+XLSX.set_fs({ writeFileSync });
 import {
   currencyDecimals, defaultRegion, formatMoney, hasRegexMetacharacters, isIsoDate, isKnownCurrency,
   isoDaysAgo, isoToday, isSafeRegexSource, MAX_MATCH_INPUT, MILEAGE_RATES, mileageAmount,
@@ -37,8 +40,8 @@ function locked<T>(fn: () => T | Promise<T>): Promise<T> {
 const ok = (text: string) => ({ content: [{ type: "text" as const, text }] });
 const fail = (text: string) => ({ content: [{ type: "text" as const, text: `Error: ${text}` }], isError: true as const });
 const json = (v: unknown) => ok(JSON.stringify(v, null, 2));
-/** A limit hit is information, not a transport error: isError stays false. */
-const gated = (text: string) => ok(text);
+/** A refused operation is an MCP error with its upgrade path preserved. */
+const gated = (text: string) => fail(text);
 
 function newId(): string { return randomBytes(4).toString("hex"); }
 

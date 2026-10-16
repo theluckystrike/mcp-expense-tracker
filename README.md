@@ -6,15 +6,15 @@
 
 Works with Claude Desktop, Claude Code, Cursor and any Model Context Protocol client. Runs on your own machine, or hosted with no install.
 
-Product page: <https://mcp.zovo.one/s/expense-tracker> — what it does, the tools it exposes, and a live token endpoint.
+Product page: <https://mcp.zovo.one/s/expense-tracker> — capabilities, free limits and supported installation paths.
 
 ## Install
 
-**Hosted, nothing to install.** Get a token from <https://mcp.zovo.one/mcp/connect> (the connect page) or <https://mcp.zovo.one/mcp/token> (the same token as JSON); a free anonymous one is issued on the spot and a Pro key works the same way. Then point an MCP client at `https://mcp.zovo.one/mcp/expense-tracker` over streamable-http and send the token as `Authorization: Bearer <token>`.
+**Hosted, nothing to install.** Get a token from <https://mcp.zovo.one/mcp/connect?acq=github> (the connect page) or <https://mcp.zovo.one/mcp/token> (the same token as JSON); a free anonymous one is issued on the spot and a Pro key works the same way. Then point an MCP client at `https://mcp.zovo.one/mcp/expense-tracker` over streamable-http and send the token as `Authorization: Bearer <token>`.
 
 If your client cannot set headers, put the token in the path instead: `https://mcp.zovo.one/mcp/expense-tracker/t/<token>`. Both forms work. The bare URL with no token answers 401 on `tools/call`, so the token is not optional.
 
-**Claude Desktop, one click.** Download `expense-tracker.mcpb` from the [latest release](https://github.com/theluckystrike/mcp-servers/releases/latest) and double-click it.
+**Claude Desktop, one click.** Download `expense-tracker.mcpb` from the [bundle catalog](https://mcp.zovo.one/downloads#expense-tracker) and double-click it.
 
 **From source.** The mirror is self-contained: every `@theluckystrike/*` dependency is vendored, so a fresh clone builds with no extra setup.
 
@@ -54,54 +54,36 @@ Log receipts and mileage in chat, split the VAT, and rebill them onto an invoice
 
 ## 60-second install
 
-npm publish for `@theluckystrike/mcp-expense-tracker` is pending. Until then, the `.mcpb` one-click bundle or a
-clone+build is the working path, both are verified below.
+Use [**expense-tracker.mcpb v0.22.9**](https://github.com/theluckystrike/mcp-servers/releases/download/v0.22.9/expense-tracker.mcpb) in Claude Desktop. [Published checksums](https://github.com/theluckystrike/mcp-servers/releases/download/v0.22.9/SHA256SUMS.txt) and the [versioned download catalog](https://mcp.zovo.one/downloads#expense-tracker) identify the exact release. The npm package is not published.
 
-One-click (.mcpb): download `expense-tracker.mcpb` from the latest release and double-click it in Claude Desktop:
-https://github.com/theluckystrike/mcp-servers/releases/latest
-
-(`claude_desktop_config.json`):
-
-```json
-{
-  "mcpServers": {
-    "expense-tracker": {
-      "command": "npx",
-      "args": ["-y", "@theluckystrike/mcp-expense-tracker"]
-    }
-  }
-}
-```
-
-Claude Code:
+For a source installation, use Node.js 22 or newer and build the shared dependency first:
 
 ```sh
-claude mcp add expense-tracker -- npx -y @theluckystrike/mcp-expense-tracker
-```
-
-(`.cursor/mcp.json`):
-
-```json
-{
-  "mcpServers": {
-    "expense-tracker": {
-      "command": "npx",
-      "args": ["-y", "@theluckystrike/mcp-expense-tracker"]
-    }
-  }
-}
-```
-
-The `npx` form above starts working the moment the package is published. Until then, use the .mcpb bundle above, or
-build from source with exactly these three commands:
-
-```sh
-git clone https://github.com/theluckystrike/mcp-servers.git && cd mcp-servers
-npm install
+git clone https://github.com/theluckystrike/mcp-servers.git
+cd mcp-servers
+npm ci
+node scripts/bootstrap-timezone.mjs
 npm run build -w packages/mcp-license -w servers/expense-tracker
 ```
 
-Then point your client's `command` at `node` with one arg: the absolute path to `servers/expense-tracker/dist/index.js`.
+Merge this entry into Claude Desktop's `mcpServers`, or into `.cursor/mcp.json` for Cursor. Replace the absolute path with your checkout:
+
+```json
+{
+  "mcpServers": {
+    "expense-tracker": {
+      "command": "node",
+      "args": ["/absolute/path/mcp-servers/servers/expense-tracker/dist/index.js"]
+    }
+  }
+}
+```
+
+For Claude Code:
+
+```sh
+claude mcp add expense-tracker -- node /absolute/path/mcp-servers/servers/expense-tracker/dist/index.js
+```
 
 To run in Pro mode set `MCP_LICENSE_KEY` in the same config block, or call `license_activate` once with your key.
 
@@ -215,6 +197,6 @@ Connect https://mcp.zovo.one/mcp/expense-tracker (tokenized URL from mcp.zovo.on
 
 ## Use these docs as an MCP server
 
-Any MCP client (Claude, Cursor, Windsurf, VS Code) can read this repository's documentation directly via GitMCP — no install:
+Any MCP client (Claude, Cursor, Windsurf, VS Code) can read this repository's documentation directly via GitMCP - no install:
 
 - Docs MCP URL: https://gitmcp.io/theluckystrike/mcp-expense-tracker
